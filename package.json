@@ -1,0 +1,24 @@
+{
+  "name": "mailmate-tracker1",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Self-hosted open- and click-tracking endpoint for MailMate. Serves the pixel, classifies the fetch, and records it in a Cloudflare D1 database.",
+  "scripts": {
+    "test": "node --test \"test/*.test.js\" \"test/*.test.mjs\"",
+    "dev": "wrangler dev --local",
+    "build": "node scripts/build.mjs",
+    "deploy": "wrangler deploy",
+    "deploy:daniel": "wrangler deploy --config wrangler.daniel.jsonc",
+    "schema:embed": "node scripts/embed-schema.mjs",
+    "schema:local": "wrangler d1 execute mailmate-tracker --local --file=./schema.sql",
+    "schema:remote": "wrangler d1 execute mailmate-tracker --remote --file=./schema.sql",
+    "migrate:generate": "node migrate/from-blob.mjs",
+    "migrate:local": "for f in migrate/data/*.sql; do wrangler d1 execute mailmate-tracker --local --file=\"$f\" || exit 1; done",
+    "migrate:remote": "for f in migrate/data/*.sql; do wrangler d1 execute mailmate-tracker --remote --file=\"$f\" || exit 1; done"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.1",
+    "wrangler": "^4.129.0"
+  }
+}

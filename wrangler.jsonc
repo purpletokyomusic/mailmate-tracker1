@@ -1,0 +1,46 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "mailmate-tracker1",
+  "main": "worker.js",
+
+  // Cloudflare enables Node compatibility by default from 2026-08-04 onward, but the flag is
+  // set explicitly anyway: this service depends on it for real, and a future edit that lowers
+  // the date should fail loudly rather than silently lose `node:crypto`.
+  //
+  // What depends on it: lib/selftag.js, lib/fingerprint.js and lib/selfips.js all use
+  // createHmac, and lib/paths.js uses Buffer. Verified in the actual runtime before porting —
+  // createHmac is synchronous here and produces byte-identical digests to Node, which is what
+  // lets every reader fingerprint learned on the Vercel deployment stay valid after the move.
+  "compatibility_date": "2026-09-04",
+  "compatibility_flags": ["nodejs_compat"],
+
+  "observability": { "enabled": true },
+
+  "d1_databases": [
+    {
+      // The code says env.DB. Wrangler's suggested binding name was the database's own name;
+      // this one reads better at the call sites and is the only place the two are tied together.
+      "binding": "DB",
+      "database_name": "mailmate-tracker",
+
+      // A placeholder, not Daniel's real database. This file is the one every new deployment
+      // starts from — a "Deploy to Cloudflare" click, or CLAUDE.md's manual walkthrough — so it
+      // must never point at his live data. Clicking the button provisions a brand-new D1
+      // database in the CLICKER's own account and rewrites this field automatically; anyone
+      // deploying by hand (or an agent following CLAUDE.md) runs `wrangler d1 create
+      // mailmate-tracker` first and pastes the real id here. Left as this all-zero placeholder,
+      // `wrangler deploy` fails loudly — "D1 binding 'DB' references database '00000000-…' which
+      // was not found" — instead of silently doing nothing useful. Daniel's own real id lives in
+      // the git-ignored wrangler.daniel.jsonc, used only via `npm run deploy:daniel`.
+      "database_id": "2af0f9c6-583f-4571-8875-a7082433e6e7"
+    }
+  ]
+
+  // Secrets are deliberately absent. TRACKER_SECRET is set with
+  //   npx wrangler secret put TRACKER_SECRET
+  // which stores it on Cloudflare and never writes it to this file — this file is committed.
+  //
+  // TRACKER_BASE_URL is optional: with nothing set, /register builds pixel URLs from the origin
+  // the request arrived on, which is correct for both the workers.dev address and any custom
+  // domain added later.
+}

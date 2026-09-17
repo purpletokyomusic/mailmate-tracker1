@@ -1,0 +1,18 @@
+# Copy this file to .dev.vars for local development (`npm run dev`), or use it as the list of
+# secrets a "Deploy to Cloudflare" click / an AI agent should ask you for at deploy time.
+#
+# TRACKER_SECRET is the ONLY one every deployment needs. It authorises both POST /register and
+# GET /events — anyone who has it can read every message this tracker has ever recorded — so
+# invent a long random one and never share it with anyone else's tracker. A fresh 32+ character
+# value:
+#   openssl rand -hex 24
+TRACKER_SECRET=
+
+# Optional. Only set this if the pixel should be served from a custom domain instead of the
+# workers.dev address Cloudflare gives you. Leave it unset — /register builds pixel URLs from
+# whatever origin the request actually arrived on, which is correct either way.
+# TRACKER_BASE_URL=
+
+# Optional. Where a malformed or unreadable click destination redirects to. Defaults to
+# https://example.com/, which is deliberately inert rather than someone else's website.
+# TRACKER_FALLBACK_URL=

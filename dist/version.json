@@ -1,0 +1,17 @@
+{
+  "version": "1.0.0",
+  "compatibility_date": "2026-09-04",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "main": "worker.bundle.js",
+  "bindings": [
+    {
+      "type": "d1",
+      "name": "DB"
+    }
+  ],
+  "secrets": [
+    "TRACKER_SECRET"
+  ]
+}
